@@ -1,18 +1,26 @@
-from turtle import *
+import requests
 
-num_sides = input()
+# Sostituisci ACCESS_TOKEN con il tuo token di accesso Instagram valido
+ACCESS_TOKEN = "your_access_token"
 
-num_sides = int(num_sides)
+# Nome utente di Jakidale
+jakidale_username = "jakidale"
 
-side_length = (100/int(num_sides))*10
+# Ottieni i follower di Jakidale
+jakidale_followers_url = f"https://api.instagram.com/v1/users/{jakidale_username}/followed-by?access_token={ACCESS_TOKEN}"
+jakidale_followers_response = requests.get(jakidale_followers_url).json()
+jakidale_followers = [follower["username"] for follower in jakidale_followers_response["data"]]
 
-if num_sides is range(3,5):
-    side_length=100
+# Ottieni i tuoi follower
+your_followers_url = f"https://api.instagram.com/v1/users/self/followed-by?access_token={ACCESS_TOKEN}"
+your_followers_response = requests.get(your_followers_url).json()
+your_followers = [follower["username"] for follower in your_followers_response["data"]]
 
-angle = 360/int(num_sides)
+# Verifica se c'è un'intersezione tra i follower di Jakidale e i tuoi follower
+intersection = set(jakidale_followers) & set(your_followers)
 
-s = getscreen()
-
-for i in range(int(num_sides)):
-    forward(side_length)
-    right(angle)
+if intersection:
+    print("C'è almeno una persona tra i follower di Jakidale che è anche tra i tuoi follower:")
+    print(intersection)
+else:
+    print("Non c'è alcuna persona che è seguita da entrambi Jakidale e te.")
